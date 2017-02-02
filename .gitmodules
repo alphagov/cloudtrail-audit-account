@@ -1,0 +1,3 @@
+[submodule "lambda-check-cloudtrail"]
+	path = lambda-check-cloudtrail
+	url = git@github.com:alphagov/lambda-check-cloudtrail.git

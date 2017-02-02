@@ -1,0 +1,14 @@
+check_cloudtrail.zip
+
+# Created by https://www.gitignore.io/api/terraform
+
+### Terraform ###
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Module directory
+.terraform/
+*.tfvars
+
+# End of https://www.gitignore.io/api/terraform
