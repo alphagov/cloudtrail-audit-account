@@ -8,6 +8,10 @@ The following example creates an s3_bucket `example` and allows accounts `111111
 
     $ terraform apply --var 'account_id_list=["111111111111", "222222222222"]' --var 'cloudtrail_s3_bucket_name="example"'
 
+Now accounts `111111111111` and `222222222222` can configure CloudTrail to send logs to the `example` S3 bucket. The prefix S3 key configured in CloudTrail should be set to that account ID.
+
+Logs will then be delivered to `s3:::example/111111111111/AWSLogs/111111111111/*` and `s3:::example/222222222222/AWSLogs/222222222222/*`
+
 ## CloudTrail delivery alarm ##
 
 If a trail is switched off so logs are no longer being delivered a notification is sent to an SNS topic. This is sent from the [lambda-check-cloudtrail](https://github.com/alphagov/lambda-check-cloudtrail) function.
