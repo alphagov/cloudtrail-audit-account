@@ -8,3 +8,16 @@ The following example creates an s3_bucket `example` and allows accounts `111111
 
     $ terraform apply --var 'account_id_list=["111111111111", "222222222222"]' --var 'cloudtrail_s3_bucket_name="example"'
 
+## CloudTrail delivery alarm ##
+
+If a trail is switched off so logs are no longer being delivered a notification is sent to an SNS topic. This is sent from the [lambda-check-cloudtrail](https://github.com/alphagov/lambda-check-cloudtrail) function.
+
+This gives an opportunity to check with the relevant AWS account holder that they intended to switch off CloudTrail e.g. that account is being deleted.
+
+## CloudWatch alarms ##
+
+Separate alarms are created from certain activity in the account. This is provided by the [aws-security-alarms](https://github.com/alphagov/aws-security-alarms) terraform module.
+
+ - Root user activity
+ - Unexpected IP access (configurable)
+ - Unauthorized activity / failed authentication attempts
