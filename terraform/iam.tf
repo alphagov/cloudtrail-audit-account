@@ -1,3 +1,60 @@
+data "aws_iam_policy_document" "view_cloudtrails_assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.log_viewers}"]
+    }
+
+    condition = {
+      test = "Bool"
+      variable = "aws:MultiFactorAuthPresent"
+      values = ["true"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "view_cloudtrails_policy_document" {
+  statement {
+    sid = "ListCloudTrailsBucket"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.cloudtrail_bucket.arn}",
+    ]
+  }
+  statement {
+    sid = "GetLogs"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.cloudtrail_bucket.arn}/*",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "view_logs_policy" {
+  name = "view_logs_policy"
+  role = "${aws_iam_role.view_logs_role.id}"
+
+  policy = "${data.aws_iam_policy_document.view_cloudtrails_policy_document.json}"
+}
+
+resource "aws_iam_role" "view_logs_role" {
+  name = "view_logs_role"
+
+  assume_role_policy = "${data.aws_iam_policy_document.view_cloudtrails_assume_role.json}"
+}
+
 data "aws_iam_policy_document" "check_cloudtrail_assume_role" {
   statement {
     actions = [
