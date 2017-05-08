@@ -13,3 +13,7 @@ variable "account_id_list" {
 variable "log_viewers" {
   type = "list"
 }
+
+variable "log_managers" {
+  type = "list"
+}

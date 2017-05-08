@@ -1,3 +1,67 @@
+data "aws_iam_policy_document" "manage_cloudtrails_assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.log_managers}"]
+    }
+
+    condition = {
+      test = "Bool"
+      variable = "aws:MultiFactorAuthPresent"
+      values = ["true"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "manage_cloudtrails_policy_document" {
+  statement {
+    sid = "UpdateCloudTrailBucketPolicy"
+
+    actions = [
+      "s3:PutBucketPolicy",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.cloudtrail_bucket.arn}",
+    ]
+  }
+  # For some reason the ListTagsLogGroup action isn't allowed on the AWS managed
+  # read-only policy, so we explicitly allow it here.
+  statement {
+    sid = "ListLogGroupTags"
+
+    actions = [
+      "logs:ListTagsLogGroup",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_role" "manage_cloudtrails_role" {
+  name = "manage_cloudtrails_role"
+
+  assume_role_policy = "${data.aws_iam_policy_document.manage_cloudtrails_assume_role.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "readonly_cloudtrails_manager" {
+  role       = "${aws_iam_role.manage_cloudtrails_role.id}"
+  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+}
+
+resource "aws_iam_role_policy" "manage_cloudtrails_policy" {
+  name = "manage_cloudtrails_policy"
+  role = "${aws_iam_role.manage_cloudtrails_role.id}"
+
+  policy = "${data.aws_iam_policy_document.manage_cloudtrails_policy_document.json}"
+}
+
 data "aws_iam_policy_document" "view_cloudtrails_assume_role" {
   statement {
     actions = [
