@@ -9,3 +9,11 @@ variable "cloudtrail_s3_bucket_name" {
 variable "account_id_list" {
   type = "list"
 }
+
+variable "log_viewers" {
+  type = "list"
+}
+
+variable "log_managers" {
+  type = "list"
+}
