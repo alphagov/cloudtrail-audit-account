@@ -87,10 +87,12 @@ data "aws_iam_policy_document" "view_cloudtrails_policy_document" {
 
     actions = [
       "s3:ListBucket",
+      "s3:ListAllMyBuckets",
+      "s3:ListObjects",
     ]
 
     resources = [
-      "${aws_s3_bucket.cloudtrail_bucket.arn}",
+      "*",
     ]
   }
   statement {
@@ -101,7 +103,7 @@ data "aws_iam_policy_document" "view_cloudtrails_policy_document" {
     ]
 
     resources = [
-      "${aws_s3_bucket.cloudtrail_bucket.arn}/*",
+      "*",
     ]
   }
 }
